@@ -1,20 +1,20 @@
-1. Kaste to seksere med fire terninger?, M, U
-2. Få minst én sekser når du kaster én terning seks ganger?, M, U
-3. Få tre like tall når du kaster tre terninger?, M, U
-4. Få en konge når du trekker ett kort?, B, M
-5. Få to par seksere når du kaster tre terninger?, U
-6. Få summen 7 når du kaster to terninger?, B, M
-7. Få fire like tall når du kaster fire terninger?, U
-8. Få tre hjerter på rad når du trekker tre kort?, M, U
-9. Få en sekser og en ener når du kaster to terninger?, B, M
-10. Få to røde kort og ett sort kort når du trekker tre kort?, M, U
-11. Få tre ulike tall når du kaster tre terninger?, M
-12. Få to par når du kaster fem terninger?, U
-13. Få en flush når du trekker fem kort?, U
-14. Få minst én toer når du kaster én terning fire ganger?, M
-15. Få to like tall når du kaster to terninger?, B, M
-16. Få summen 12 når du kaster to terninger?, M, U
-17. Få to like tall når du kaster tre terninger?, M
-18. Få minst én sekser når du kaster to terninger?, B, M
-19. Få tre seksere når du kaster tre terninger?, U
-20. Få to røde kort på rad fra en full kortstokk?, M, U
+1. Kaste to seksere med fire terninger, $P = 0.1157$, utregning: $1 - \left[\binom{4}{0}\left(\frac{5}{6}\right)^4 + \binom{4}{1}\left(\frac{1}{6}\right)^1\left(\frac{5}{6}\right)^3 + \binom{4}{3}\left(\frac{1}{6}\right)^3\left(\frac{5}{6}\right)^1 + \binom{4}{4}\left(\frac{1}{6}\right)^4\right]$, M, U
+2. Få minst én sekser når du kaster én terning seks ganger, $P = 0.6651$, utregning: $1 - \left(\frac{5}{6}\right)^6$, M, U
+3. Få tre like tall når du kaster tre terninger, $P = 0.0278$, utregning: $6 \cdot \left(\frac{1}{6}\right)^3$, M, U
+4. Få en konge når du trekker ett kort, $P = 0.0769$, utregning: $\frac{4}{52}$, B, M
+5. Få to par seksere når du kaster tre terninger, $P = 0.0000$, utregning: $0 \text{ (ikke mulig med bare tre terninger)}$, U, M
+6. Få summen 7 når du kaster to terninger, $P = 0.1667$, utregning: $\frac{6}{36}$, B, M
+7. Få fire like tall når du kaster fire terninger, $P = 0.0046$, utregning: $6 \cdot \left(\frac{1}{6}\right)^4$, U
+8. Få tre hjerter på rad når du trekker tre kort, $P = 0.0129$, utregning: $\frac{13}{52} \cdot \frac{12}{51} \cdot \frac{11}{50}$, M, U
+9. Få en sekser og en ener når du kaster to terninger, $P = 0.0556$, utregning: $\frac{2}{36}$, B, M
+10. Få to røde kort og ett sort kort når du trekker tre kort, $P = 0.2549$, utregning: $\left(\frac{26}{52} \cdot \frac{25}{51} \cdot \frac{26}{50}\right) + \left(\frac{26}{52} \cdot \frac{26}{51} \cdot \frac{25}{50}\right)$, M, U
+11. Få tre ulike tall når du kaster tre terninger, $P = 0.5556$, utregning: $\frac{6 \cdot 5 \cdot 4}{6^3}$, M
+12. Få to par når du kaster fem terninger, $P = 0.2310$, utregning: $\text{Kombinatorisk utregning med fordelinger gir } P \approx 0.231$, U
+13. Få en flush når du trekker fem kort, $P = 0.0020$, utregning: $\frac{4 \cdot \binom{13}{5}}{\binom{52}{5}}$, U
+14. Få minst én toer når du kaster én terning fire ganger, $P = 0.5177$, utregning: $1 - \left(\frac{5}{6}\right)^4$, M
+15. Få to like tall når du kaster to terninger, $P = 0.1667$, utregning: $\frac{6}{36}$, B, M
+16. Få summen 12 når du kaster to terninger, $P = 0.0278$, utregning: $\frac{1}{36}$, M, U
+17. Få to like tall når du kaster tre terninger, $P = 0.4167$, utregning: $\frac{6 \cdot 5 \cdot 3}{6^3}$, M
+18. Få minst én sekser når du kaster to terninger, $P = 0.3056$, utregning: $1 - \left(\frac{5}{6}\right)^2$, B, M
+19. Få tre seksere når du kaster tre terninger, $P = 0.0046$, utregning: $\left(\frac{1}{6}\right)^3$, U
+20. Få to røde kort på rad fra en full kortstokk, $P = 0.2451$, utregning: $\frac{26}{52} \cdot \frac{25}{51}$, M, U
