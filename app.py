@@ -1,53 +1,56 @@
+# streamlit_app.py
 import streamlit as st
-import random
-import re
+from io import StringIO
+import os
 
-# Function to parse questions from the text file
-def parse_questions(file_path):
-    questions = []
-    with open(file_path, 'r', encoding='utf-8') as f:
-        for line in f:
-            match = re.match(r"^(\d+)\.\s+(.*?),\s+\$P\s+=\s+([0-9.]+),\s+utregning:\s+\$(.*?)\$, (.*)$", line.strip())
-            if match:
-                q_id = int(match.group(1))
-                text = match.group(2)
-                prob = match.group(3)
-                calc = match.group(4)
-                levels = [lvl.strip() for lvl in match.group(5).split(',')]
-                questions.append({
-                    "id": q_id,
-                    "text": text,
-                    "probability": prob,
-                    "calculation": calc,
-                    "levels": levels
-                })
-    return questions
+st.set_page_config(page_title="Borel som spel", page_icon="🎲", layout="centered")
 
-# Load questions from file
-question_file = "questions.txt"
-questions = parse_questions(question_file)
+st.title("🎲 Borel som spel")
 
-# Streamlit UI setup
-st.set_page_config(page_title="Borel-spill", page_icon="🎲", layout="centered")
-st.title("🎲 Borel-spill om sannsynlighet")
+st.markdown(
+    """
+    Last opp ei tekstfil **eller** legg ei fil kalt `borel.txt` i samme mappe som denne appen.
+    Hver linje skal ha formatet:  
+    `tekst før komma, LaTeX-uttrykk etter komma`
+    """,
+)
 
-# Nivåvalg
-level_map = {"Barnetrinn": "B", "Mellomtrinn": "M", "Ungdomstrinn": "U"}
-selected_level = st.selectbox("Velg nivå", list(level_map.keys()))
-level_code = level_map[selected_level]
+# ---------- Hjelpefunksjoner ----------
+def parse_lines(raw_text: str):
+    """Returnerer liste av (oppgavetekst, latex) fra rå tekst. Hopper over tomme linjer og kommentarer (#...)."""
+    items = []
+    for raw in raw_text.splitlines():
+        line = raw.strip()
+        if not line or line.startswith("#") or line.startswith("//") or line.startswith("---"):
+            continue
+        if "," not in line:
+            # linjer uten komma ignoreres
+            continue
+        left, right = line.split(",", 1)
+        oppgave = left.strip()
+        latex = right.strip()
 
-# Filtrer spørsmål basert på valgt nivå
-filtered_questions = [q for q in questions if level_code in q["levels"]]
+        # Fjern omsluttende $ ... $ hvis brukeren allerede har satt det
+        if latex.startswith("$") and latex.endswith("$") and latex.count("$") == 2:
+            latex = latex[1:-1].strip()
 
-# Velg et tilfeldig spørsmål
-if filtered_questions:
-    question = random.choice(filtered_questions)
-    with st.container():
-        st.markdown(f"### Spørsmål {question['id']}")
-        st.markdown(f"**{question['text']}**")
-        if st.button("Vis svar"):
-            st.latex(f"P = {question['probability']}")
-            st.markdown("**Utregning:**")
-            st.latex(question['calculation'])
-else:
-    st.warning("Ingen spørsmål tilgjengelig for valgt nivå.")
+        items.append((oppgave, latex))
+    return items
+
+def load_tasks():
+    """Prøv først opplasting, ellers prøv 'borel.txt' i arbeidsmappa."""
+    uploaded = st.file_uploader("Last opp tekstfila med Borel-oppgåver (.txt)", type=["txt"])
+    if uploaded is not None:
+        text = uploaded.read().decode("utf-8")
+        return parse_lines(text), "opplasta fil"
+
+    # Fallback: lokal fil borel.txt hvis den finnes
+    if os.path.exists("borel.txt"):
+        with open("borel.txt", "r", encoding="utf-8") as f:
+            return parse_lines(f.read()), "borel.txt"
+    return [], None
+
+# ---------- Last opp/les oppgåver ----------
+items, source = load_tasks()
+
+if "idx" not in st.sess
