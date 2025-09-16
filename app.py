@@ -1,57 +1,58 @@
 import streamlit as st
 import random
+import re
 
 # Function to parse questions from the text file
 def parse_questions(file_path):
     questions = []
     with open(file_path, 'r', encoding='utf-8') as f:
         for line in f:
-            if ',' in line:
-                parts = line.strip().split(',')
-                question_text = parts[0].strip()
-                levels = [p.strip() for p in parts[1:]]
-                questions.append((question_text, levels))
+            match = re.match(r"^(\\d+)\\. (.*?), \\$P = ([0-9.]+)\\$, utregning: \\$(.*?)\\$, (.*)$", line.strip())
+            if match:
+                q_id = int(match.group(1))
+                text = match.group(2)
+                prob = float(match.group(3))
+                calc = match.group(4)
+                levels = [lvl.strip() for lvl in match.group(5).split(',')]
+                questions.append({
+                    \"id\": q_id,
+                    \"text\": text,
+                    \"probability\": prob,
+                    \"calculation\": calc,
+                    \"levels\": levels
+                })
     return questions
-# Function to determine the answer (JA/NEI) and explanation
-def evaluate_question(question_text):
-    # Enkel heuristikk – kan byttes ut med ekte sannsynlighetsberegning
-    answer = "JA" if "minst" in question_text.lower() or "få en" in question_text.lower() else "NEI"
-    explanation = f"""
-    Dette er en forenklet vurdering basert på nøkkelord i spørsmålet: '{question_text}'.
 
-    For nøyaktig sannsynlighetsutregning må man analysere utfallsrommet og telle gunstige utfall.
-    """
-    return answer, explanation
-
-# Load questions from file
-question_file = "questions.txt"
+# Load questions
+question_file = \"questions_with_probabilities.txt\"
 questions = parse_questions(question_file)
 
-# Streamlit UI
-st.set_page_config(page_title="Borel-spørsmål", page_icon="🎲", layout="centered")
-st.title("🎲 Borel-spørsmål om sannsynlighet")
+# UI setup
+st.set_page_config(page_title=\"Borel-spørsmål\", page_icon=\"🎲\", layout=\"centered\")
+st.title(\"🎲 Borel-spørsmål om sannsynlighet\")
 
-# Select level
-level_map = {"Barnetrinn": "B", "Mellomtrinn": "M", "Ungdomstrinn": "U"}
-selected_level = st.selectbox("Velg nivå", list(level_map.keys()))
+# Nivåvalg
+level_map = {\"Barnetrinn\": \"B\", \"Mellomtrinn\": \"M\", \"Ungdomstrinn\": \"U\"}
+selected_level = st.selectbox(\"Velg nivå\", list(level_map.keys()))
 level_code = level_map[selected_level]
 
-# Filter questions by selected level
-filtered_questions = [q for q in questions if level_code in q[1]]
+# Filtrer spørsmål
+filtered_questions = [q for q in questions if level_code in q[\"levels\"]]
 
-# Session state to store current question
-if "current_question" not in st.session_state:
+# Session state
+if \"current_question\" not in st.session_state:
     st.session_state.current_question = None
 
-# Button to get a new question
-if st.button("🆕 Still nytt spørsmål"):
+# Nytt spørsmål
+if st.button(\"🆕 Still nytt spørsmål\") and filtered_questions:
     st.session_state.current_question = random.choice(filtered_questions)
 
-# Display current question as a "kort"
+# Vis spørsmål som kort
 if st.session_state.current_question:
+    q = st.session_state.current_question
     st.markdown(
-        f"""
-        <div style="
+        f\"\"\"
+        <div style=\"
             background-color: #f0f8ff;
             padding: 40px;
             border-radius: 20px;
@@ -59,21 +60,20 @@ if st.session_state.current_question:
             margin-top: 30px;
             margin-bottom: 30px;
             text-align: center;
-        ">
-            <h2 style="color: #222; font-size: 28px;">{st.session_state.current_question[0]}</h2>
+        \">
+            <h2 style=\"color: #222; font-size: 28px;\">{q['text']}</h2>
         </div>
-        """,
-        unsafe_allow_html=True
+        \"\"\", unsafe_allow_html=True
     )
 
-    # Button to show answer
-    if st.button("📢 Vis svar (JA/NEI)"):
-        answer, _ = evaluate_question(st.session_state.current_question[0])
-        st.success(f"Svar: {answer}")
+    # Vis svar
+    if st.button(\"📢 Vis svar (JA/NEI)\"):
+        svar = \"JA\" if q[\"probability\"] > 0.05 else \"NEI\"  # Juster terskel etter behov
+        st.success(f\"Svar: {svar} (P = {q['probability']:.4f})\")
 
-    # Button to show explanation
-    if st.button("🧮 Vis utregning"):
-        _, explanation = evaluate_question(st.session_state.current_question[0])
-        st.info(explanation)
+    # Vis utregning
+    if st.button(\"🧮 Vis utregning\" ):
+        st.latex(q[\"calculation\"])
 else:
-    st.write("Trykk på 'Still nytt spørsmål' for å starte.")
+    st.write(\"Trykk på 'Still nytt spørsmål' for å starte.\")
+
