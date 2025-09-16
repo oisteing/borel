@@ -53,4 +53,88 @@ def load_tasks():
 # ---------- Last opp/les oppgåver ----------
 items, source = load_tasks()
 
-if "idx" not in st.sess
+if "idx" not in st.session_state:
+    st.session_state.idx = 0
+if "revealed_for" not in st.session_state:
+    # lagrer hvilket indeksnummer som har fått "Vis utregning" trykket
+    st.session_state.revealed_for = set()
+
+if not items:
+    st.info("Ingen oppgåver funnet ennå. Last opp ei fil, eller legg `borel.txt` i mappe sammen med appen.")
+    st.stop()
+
+st.success(f"Fant {len(items)} oppgåver fra {source}.")
+
+# ---------- Navigasjon ----------
+cols_top = st.columns([1, 1, 2])
+with cols_top[0]:
+    if st.button("⬅️ Forrige", use_container_width=True):
+        st.session_state.idx = (st.session_state.idx - 1) % len(items)
+with cols_top[1]:
+    if st.button("Neste ➡️", use_container_width=True):
+        st.session_state.idx = (st.session_state.idx + 1) % len(items)
+
+idx = st.session_state.idx
+oppgave, latex = items[idx]
+
+st.caption(f"Oppgåve {idx+1} av {len(items)}")
+
+# ---------- "Kort" for oppgåva ----------
+card_css = """
+<style>
+.card {
+  border: 1px solid #e6e6e6;
+  border-radius: 14px;
+  padding: 18px 20px;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+  background: white;
+}
+.card h3 { margin: 0 0 6px 0; }
+.card p { margin: 0; font-size: 1.05rem; }
+</style>
+"""
+st.markdown(card_css, unsafe_allow_html=True)
+
+with st.container():
+    st.markdown(
+        f"""
+        <div class="card">
+          <h3>Oppgåve</h3>
+          <p>{oppgave}</p>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+# ---------- Knapp for å vise utrekning ----------
+btn_key = f"reveal_{idx}"
+show = idx in st.session_state.revealed_for
+
+cols = st.columns([1, 2, 1])
+with cols[1]:
+    if not show:
+        if st.button("👀 Vis utregning", key=btn_key, use_container_width=True):
+            st.session_state.revealed_for.add(idx)
+            show = True
+    else:
+        st.button("✅ Utregning vist", key=btn_key + "_shown", disabled=True, use_container_width=True)
+
+# ---------- Vis LaTeX-utrekning (hvis avslørt) ----------
+if show:
+    st.markdown("**Utregning:**")
+    try:
+        st.latex(latex)
+    except Exception:
+        # Hvis latex ikke rendres, vis som kode så brukeren kan feilsøke
+        st.warning("Klarte ikke å rendre LaTeX. Viser rå tekst i stedet:")
+        st.code(latex, language="latex")
+
+# ---------- Bunnnavigasjon ----------
+cols_bottom = st.columns([1, 1, 2])
+with cols_bottom[0]:
+    if st.button("🔁 Start på nytt", use_container_width=True):
+        st.session_state.idx = 0
+        st.session_state.revealed_for = set()
+with cols_bottom[1]:
+    if st.button("Neste oppgåve ➡️", key="next_bottom", use_container_width=True):
+        st.session_state.idx = (st.session_state.idx + 1) % len(items)
