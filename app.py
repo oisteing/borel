@@ -1,4 +1,3 @@
-
 import streamlit as st
 import random
 
@@ -13,7 +12,6 @@ def parse_questions(file_path):
                 levels = [p.strip() for p in parts[1:]]
                 questions.append((question_text, levels))
     return questions
-
 # Function to determine the answer (JA/NEI) and explanation
 def evaluate_question(question_text):
     # Enkel heuristikk – kan byttes ut med ekte sannsynlighetsberegning
@@ -30,6 +28,7 @@ question_file = "questions.txt"
 questions = parse_questions(question_file)
 
 # Streamlit UI
+st.set_page_config(page_title="Borel-spørsmål", page_icon="🎲", layout="centered")
 st.title("🎲 Borel-spørsmål om sannsynlighet")
 
 # Select level
@@ -48,10 +47,24 @@ if "current_question" not in st.session_state:
 if st.button("🆕 Still nytt spørsmål"):
     st.session_state.current_question = random.choice(filtered_questions)
 
-# Display current question
+# Display current question as a "kort"
 if st.session_state.current_question:
-    st.subheader("Spørsmål:")
-    st.write(st.session_state.current_question[0])
+    st.markdown(
+        f"""
+        <div style="
+            background-color: #f0f8ff;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 4px 4px 12px rgba(0,0,0,0.1);
+            margin-top: 30px;
+            margin-bottom: 30px;
+            text-align: center;
+        ">
+            <h2 style="color: #222; font-size: 28px;">{st.session_state.current_question[0]}</h2>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
 
     # Button to show answer
     if st.button("📢 Vis svar (JA/NEI)"):
