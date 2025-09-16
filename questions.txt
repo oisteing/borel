@@ -1,0 +1,20 @@
+1. Kaste to seksere med fire terninger?, M, U
+2. Få minst én sekser når du kaster én terning seks ganger?, M, U
+3. Få tre like tall når du kaster tre terninger?, M, U
+4. Få en konge når du trekker ett kort?, B, M
+5. Få to par seksere når du kaster tre terninger?, U
+6. Få summen 7 når du kaster to terninger?, B, M
+7. Få fire like tall når du kaster fire terninger?, U
+8. Få tre hjerter på rad når du trekker tre kort?, M, U
+9. Få en sekser og en ener når du kaster to terninger?, B, M
+10. Få to røde kort og ett sort kort når du trekker tre kort?, M, U
+11. Få tre ulike tall når du kaster tre terninger?, M
+12. Få to par når du kaster fem terninger?, U
+13. Få en flush når du trekker fem kort?, U
+14. Få minst én toer når du kaster én terning fire ganger?, M
+15. Få to like tall når du kaster to terninger?, B, M
+16. Få summen 12 når du kaster to terninger?, M, U
+17. Få to like tall når du kaster tre terninger?, M
+18. Få minst én sekser når du kaster to terninger?, B, M
+19. Få tre seksere når du kaster tre terninger?, U
+20. Få to røde kort på rad fra en full kortstokk?, M, U
